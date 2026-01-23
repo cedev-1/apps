@@ -1,0 +1,245 @@
+groups:
+  - name: Cloudreve Configuration
+    description: Cloudreve specific settings
+  - name: Network Configuration
+    description: Network settings
+  - name: Storage Configuration
+    description: Storage settings
+  - name: User and Group Configuration
+    description: "User and Group settings"
+  - name: Resources Configuration
+    description: "Resources limits settings"
+
+questions:
+  - variable: timezone
+    group: Cloudreve Configuration
+    label: Timezone
+    schema:
+      type: string
+      default: Etc/UTC
+      $ref:
+        - definitions/timezone
+
+  - variable: cloudreve
+    group: Cloudreve Configuration
+    label: Cloudreve Settings
+    schema:
+      type: dict
+      attrs:
+        - variable: db_password
+          label: Database Password
+          schema:
+            type: string
+            private: true
+            required: true
+        - variable: redis_password
+          label: Redis Password
+          schema:
+            type: string
+            private: true
+            required: true
+            
+  - variable: network
+    group: Network Configuration
+    label: Network Settings
+    schema:
+      type: dict
+      attrs:
+        - variable: web_port
+          label: Web UI Port
+          schema:
+            type: dict
+            attrs:
+              - variable: bind_mode
+                label: Bind Mode
+                schema:
+                  type: string
+                  default: published
+                  enum:
+                    - value: published
+                      description: Published
+                    - value: expose
+                      description: Expose
+              - variable: port_number
+                label: Port
+                schema:
+                  type: int
+                  default: 5212
+                  min: 1024
+                  max: 65535
+        - variable: aria2_port
+          label: Aria2 Port
+          schema:
+            type: dict
+            attrs:
+              - variable: bind_mode
+                label: Bind Mode
+                schema:
+                  type: string
+                  default: published
+                  enum:
+                    - value: published
+                      description: Published
+                    - value: expose
+                      description: Expose
+              - variable: port_number
+                label: Port
+                schema:
+                  type: int
+                  default: 6888
+                  min: 1024
+                  max: 65535
+
+  - variable: storage
+    group: Storage Configuration
+    label: Storage
+    schema:
+      type: dict
+      attrs:
+        - variable: data
+          label: Cloudreve Data
+          schema:
+            type: dict
+            attrs:
+              - variable: type
+                label: Type
+                schema:
+                  type: string
+                  default: ix_volume
+                  enum:
+                    - value: ix_volume
+                      description: iX Volume
+                    - value: host_path
+                      description: Host Path
+              - variable: ix_volume_config
+                label: iX Volume Configuration
+                schema:
+                  type: dict
+                  show_if: [["type", "=", "ix_volume"]]
+                  attrs:
+                    - variable: dataset_name
+                      label: Dataset Name
+                      schema:
+                        type: string
+                        default: data
+              - variable: host_path_config
+                label: Host Path Configuration
+                schema:
+                  type: dict
+                  show_if: [["type", "=", "host_path"]]
+                  attrs:
+                    - variable: path
+                      label: Host Path
+                      schema:
+                        type: hostpath
+        - variable: postgres_data
+          label: Postgres Data
+          schema:
+            type: dict
+            attrs:
+              - variable: type
+                label: Type
+                schema:
+                  type: string
+                  default: ix_volume
+                  enum:
+                    - value: ix_volume
+                      description: iX Volume
+                    - value: host_path
+                      description: Host Path
+              - variable: ix_volume_config
+                label: iX Volume Configuration
+                schema:
+                  type: dict
+                  show_if: [["type", "=", "ix_volume"]]
+                  attrs:
+                    - variable: dataset_name
+                      label: Dataset Name
+                      schema:
+                        type: string
+                        default: postgres_data
+              - variable: host_path_config
+                label: Host Path Configuration
+                schema:
+                  type: dict
+                  show_if: [["type", "=", "host_path"]]
+                  attrs:
+                    - variable: path
+                      label: Host Path
+                      schema:
+                        type: hostpath
+        - variable: redis_data
+          label: Redis Data
+          schema:
+            type: dict
+            attrs:
+              - variable: type
+                label: Type
+                schema:
+                  type: string
+                  default: ix_volume
+                  enum:
+                    - value: ix_volume
+                      description: iX Volume
+                    - value: host_path
+                      description: Host Path
+              - variable: ix_volume_config
+                label: iX Volume Configuration
+                schema:
+                  type: dict
+                  show_if: [["type", "=", "ix_volume"]]
+                  attrs:
+                    - variable: dataset_name
+                      label: Dataset Name
+                      schema:
+                        type: string
+                        default: redis_data
+              - variable: host_path_config
+                label: Host Path Configuration
+                schema:
+                  type: dict
+                  show_if: [["type", "=", "host_path"]]
+                  attrs:
+                    - variable: path
+                      label: Host Path
+                      schema:
+                        type: hostpath
+
+  - variable: run_as
+    group: User and Group Configuration
+    label: Run As
+    schema:
+      type: dict
+      attrs:
+        - variable: user
+          label: User ID
+          schema:
+            type: int
+            default: 568
+        - variable: group
+          label: Group ID
+          schema:
+            type: int
+            default: 568
+
+  - variable: resources
+    group: Resources Configuration
+    label: Resources
+    schema:
+      type: dict
+      attrs:
+        - variable: limits
+          label: Limits
+          schema:
+            type: dict
+            attrs:
+              - variable: cpus
+                label: CPUs
+                schema:
+                  type: float
+                  default: 4.0
+              - variable: memory
+                label: Memory
+                schema:
+                  type: int
+                  default: 8192

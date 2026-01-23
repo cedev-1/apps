@@ -1,0 +1,40 @@
+timezone: Etc/UTC
+cloudreve:
+  db_password: "supersecretpassword"
+  redis_password: "supersecretpassword"
+
+network:
+  web_port:
+    bind_mode: published
+    port_number: 30080
+  aria2_port:
+    bind_mode: published
+    port_number: 30088
+
+ix_volumes:
+  data: /opt/tests/mnt/cloudreve/data
+  postgres_data: /opt/tests/mnt/cloudreve/postgres_data
+  redis_data: /opt/tests/mnt/cloudreve/redis_data
+
+storage:
+  data:
+    type: ix_volume
+    ix_volume_config:
+      dataset_name: data
+  postgres_data:
+    type: ix_volume
+    ix_volume_config:
+      dataset_name: postgres_data
+  redis_data:
+    type: ix_volume
+    ix_volume_config:
+      dataset_name: redis_data
+
+run_as:
+  user: 568
+  group: 568
+
+resources:
+  limits:
+    cpus: 4.0
+    memory: 8192

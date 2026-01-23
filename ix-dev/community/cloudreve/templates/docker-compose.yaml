@@ -1,0 +1,49 @@
+{% set tpl = ix_lib.base.render.Render(values) %}
+
+{% set app = tpl.add_container(values.consts.app_container_name, "image") %}
+{% do app.set_user(values.run_as.user, values.run_as.group) %}
+{% do app.healthcheck.set_test("curl", {"port": values.network.web_port.port_number, "path": "/"}) %}
+
+{% do app.environment.add_env("CR_CONF_Database.Type", "postgres") %}
+{% do app.environment.add_env("CR_CONF_Database.Host", values.consts.app_container_name + "-postgres") %}
+{% do app.environment.add_env("CR_CONF_Database.User", values.consts.db_user) %}
+{% do app.environment.add_env("CR_CONF_Database.Name", values.consts.db_name) %}
+{% do app.environment.add_env("CR_CONF_Database.Port", "5432") %}
+{% do app.environment.add_env("CR_CONF_Database.Password", values.cloudreve.db_password) %}
+{% do app.environment.add_env("CR_CONF_Redis.Password", values.cloudreve.redis_password) %}
+{% do app.environment.add_env("CR_CONF_Redis.Server", values.consts.app_container_name + "-redis:6379") %}
+
+{% do app.add_port(values.network.web_port) %}
+{# Add Aria2 port (TCP and UDP) #}
+{% do app.add_port(values.network.aria2_port) %}
+{% do app.add_port(values.network.aria2_port, {"protocol": "udp"}) %}
+
+{% do app.add_storage("/cloudreve/data", values.storage.data) %}
+
+{% set perms = tpl.deps.perms(values.consts.perms_container_name) %}
+{% do perms.add_or_skip_action("data", values.storage.data, {"uid": values.run_as.user, "gid": values.run_as.group, "mode": "check"}) %}
+
+{% set pg_config = {
+  "user": values.consts.db_user,
+  "password": values.cloudreve.db_password,
+  "database": values.consts.db_name,
+  "volume": values.storage.postgres_data,
+} %}
+{% set postgres = tpl.deps.postgres(values.consts.app_container_name + "-postgres", "postgres_image", pg_config, perms) %}
+{% do app.depends.add_dependency(values.consts.app_container_name + "-postgres", "service_healthy") %}
+
+{% set redis_config = {
+  "password": values.cloudreve.redis_password,
+  "volume": values.storage.redis_data,
+} %}
+{% set redis = tpl.deps.redis(values.consts.app_container_name + "-redis", "redis_image", redis_config, perms) %}
+{% do app.depends.add_dependency(values.consts.app_container_name + "-redis", "service_healthy") %}
+
+{% if perms.has_actions() %}
+  {% do perms.activate() %}
+  {% do app.depends.add_dependency(values.consts.perms_container_name, "service_completed_successfully") %}
+{% endif %}
+
+{% do tpl.portals.add(values.network.web_port) %}
+
+{{ tpl.render() | tojson }}
