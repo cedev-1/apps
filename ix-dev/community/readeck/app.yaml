@@ -1,0 +1,38 @@
+annotations:
+  min_scale_version: 24.10.2.2
+app_version: 0.22.2
+capabilities: []
+categories:
+- productivity
+changelog_url: https://codeberg.org/readeck/readeck/releases
+date_added: '2026-03-08'
+description: Readeck is a simple web application that lets you save the precious readable
+  content of web pages you like and want to keep forever.
+home: https://readeck.org
+host_mounts: []
+icon: https://readeck.org/media/favicons/favicon.d57024ea.svg
+keywords:
+- bookmark
+- read-later
+- web-clipper
+lib_version: 2.2.8
+lib_version_hash: 76b40b42163deb26edbad5f973f1bd69b68bd85625bcd8247545194d99b9f912
+maintainers:
+- email: dev@truenas.com
+  name: truenas
+  url: https://www.truenas.com/
+name: readeck
+run_as_context:
+- description: Readeck runs as any non-root user.
+  gid: 568
+  group_name: apps
+  uid: 568
+  user_name: apps
+screenshots:
+- https://codeberg.org/readeck/readeck/raw/branch/main/screenshots/bookmark-list.webp
+sources:
+- https://codeberg.org/readeck/readeck
+- https://readeck.org/en/docs/
+title: Readeck
+train: community
+version: 1.0.0

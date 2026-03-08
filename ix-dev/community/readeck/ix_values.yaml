@@ -1,0 +1,12 @@
+images:
+  image:
+    repository: codeberg.org/readeck/readeck
+    tag: 0.22.2
+  container_utils_image:
+    repository: ixsystems/container-utils
+    tag: 1.0.2
+
+consts:
+  readeck_container_name: readeck
+  perms_container_name: permissions
+  data_path: /readeck
